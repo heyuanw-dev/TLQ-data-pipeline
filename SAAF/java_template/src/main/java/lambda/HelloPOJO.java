@@ -29,7 +29,7 @@ public class HelloPOJO implements RequestHandler<Request, HashMap<String, Object
         
         //****************START FUNCTION IMPLEMENTATION*************************
         //Add custom key/value attribute to SAAF's output. (OPTIONAL)
-        inspector.addAttribute("message", "Hello " + request.getName() 
+        inspector.addAttribute("message", "Hello " + request.getSql() 
                 + "! This is an attributed added to the Inspector!");
         
         

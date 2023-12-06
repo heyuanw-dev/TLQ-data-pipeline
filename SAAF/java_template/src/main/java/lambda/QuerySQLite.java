@@ -77,7 +77,7 @@ public class QuerySQLite implements RequestHandler<Request, HashMap<String, Obje
             rs.close();
 
             // Insert row into mytable
-            ps = con.prepareStatement("insert into mytable values('" + request.getName() + "','" +
+            ps = con.prepareStatement("insert into mytable values('" + request.getSql() + "','" +
                  UUID.randomUUID().toString().substring(0,8) + "','" + UUID.randomUUID().toString().substring(0,4) + "');");
             ps.execute();
 
@@ -98,7 +98,7 @@ public class QuerySQLite implements RequestHandler<Request, HashMap<String, Obje
             rs.close();
             con.close();
 
-            r.setNames(ll);
+            r.setResults(ll);
             
             // sleep to ensure that concurrent calls obtain separate Lambdas
             try
@@ -119,7 +119,7 @@ public class QuerySQLite implements RequestHandler<Request, HashMap<String, Obje
         // *********************************************************************
         // Set hello message here
         // *********************************************************************
-        String hello = "Hello " + request.getName();
+        String hello = "Hello " + request.getSql();
 
         // Set return result in Response class, class is marshalled into JSON
         r.setValue(hello);
@@ -223,10 +223,10 @@ public class QuerySQLite implements RequestHandler<Request, HashMap<String, Obje
         String name = (args.length > 0 ? args[0] : "");
 
         // Load the name into the request object
-        req.setName(name);
+        req.setSql(name);
 
         // Report name to stdout
-        System.out.println("cmd-line param name=" + req.getName());
+        System.out.println("cmd-line param name=" + req.getSql());
 
         // Run the function
         HashMap resp = lt.handleRequest(req, c);

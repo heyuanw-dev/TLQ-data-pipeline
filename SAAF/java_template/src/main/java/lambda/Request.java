@@ -6,22 +6,22 @@ package lambda;
  */
 public class Request {
 
-    String name;
+    String sql;
 
-    public String getName() {
-        return name;
+    public String getSql() {
+        return sql;
     }
     
     public String getNameALLCAPS() {
-        return name.toUpperCase();
+        return sql.toUpperCase();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSql(String name) {
+        this.sql = name;
     }
 
     public Request(String name) {
-        this.name = name;
+        this.sql = name;
     }
 
     public Request() {

@@ -5,6 +5,11 @@ import com.amazonaws.services.lambda.runtime.ClientContext;
 import com.amazonaws.services.lambda.runtime.CognitoIdentity;
 import com.amazonaws.services.lambda.runtime.Context; 
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,6 +19,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.LinkedList;
 import java.util.Properties;
 import saaf.Inspector;
@@ -47,7 +53,7 @@ public class QueryRDS implements RequestHandler<Request, HashMap<String, Object>
         //Add custom key/value attribute to SAAF's output. (OPTIONAL)
         
         //Create and populate a separate response object for function output. (OPTIONAL)
-        Response r = new Response();
+        Response response = new Response();
 
         try 
         {
@@ -59,27 +65,40 @@ public class QueryRDS implements RequestHandler<Request, HashMap<String, Object>
             String password = properties.getProperty("password");
             String driver = properties.getProperty("driver");
             
-            r.setValue(request.getName());
+            response.setValue(request.getSql());
             // Manually loading the JDBC Driver is commented out
             // No longer required since JDBC 4
             //Class.forName(driver);
             Connection con = DriverManager.getConnection(url,username,password);
             
-            PreparedStatement ps = con.prepareStatement("insert into mytable values('" + request.getName() + "','b','c');");
-            ps.execute();
-            ps = con.prepareStatement("select * from mytable;");
+            PreparedStatement ps = con.prepareStatement(request.getSql());
             ResultSet rs = ps.executeQuery();
-            LinkedList<String> ll = new LinkedList<String>();
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Create an array to store JSON objects
+            ArrayNode jsonArray = objectMapper.createArrayNode();
             while (rs.next())
             {
-                logger.log("name=" + rs.getString("name"));
-                ll.add(rs.getString("name"));
-                logger.log("col2=" + rs.getString("col2"));
-                logger.log("col3=" + rs.getString("col3"));
+                // logger.log("name=" + rs.getString("name"));
+                // ll.add(rs.getString("name"));
+                // logger.log("col2=" + rs.getString("col2"));
+                // logger.log("col3=" + rs.getString("col3"));
+                ObjectNode jsonObject = objectMapper.createObjectNode();
+
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object columnValue = rs.getObject(i);
+                    jsonObject.put(columnName, columnValue.toString());
+                }
+
+                jsonArray.add(jsonObject);
             }
             rs.close();
             con.close();
-            r.setNames(ll);
+            String jsonString = objectMapper.writeValueAsString(jsonArray);
+            response.setResults(jsonString);
         } 
         catch (Exception e) 
         {
@@ -90,7 +109,7 @@ public class QueryRDS implements RequestHandler<Request, HashMap<String, Object>
         //Print log information to the Lambda log as needed
         //logger.log("log message...");
         
-        inspector.consumeResponse(r);
+        inspector.consumeResponse(response);
         
         //****************END FUNCTION IMPLEMENTATION***************************
         
@@ -175,10 +194,10 @@ public class QueryRDS implements RequestHandler<Request, HashMap<String, Object>
         String name = (args.length > 0 ? args[0] : "");
 
         // Load the name into the request object
-        req.setName(name);
+        req.setSql(name);
 
         // Report name to stdout
-        System.out.println("cmd-line param name=" + req.getName());
+        System.out.println("cmd-line param name=" + req.getSql());
 
         // Test properties file creation
         Properties properties = new Properties();

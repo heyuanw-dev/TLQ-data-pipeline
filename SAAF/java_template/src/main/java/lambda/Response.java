@@ -32,23 +32,24 @@ public class Response extends saaf.Response {
         this.value = value;
     }
 
-    public List<String> names;
-    public List<String> getNames()
+    public String results;
+    public String getResults()
     {
-        return this.names;
+        return this.results;
     }
-    public void setNames(List<String> names)
+    public void setResults(String results)
     {
-        this.names = names;
+        this.results = results;
     }
     public String getNamesString()
     {
-        StringBuilder sb = new StringBuilder();
-        for (String s : this.names)
-        {
-            sb.append(s + "; ");
-        }
-        return sb.toString();
+        // StringBuilder sb = new StringBuilder();
+        // for (String s : this.results)
+        // {
+        //     sb.append(s + "; ");
+        // }
+        // return sb.toString();
+        return this.results;
     }
 
     public String mysqlversion;
