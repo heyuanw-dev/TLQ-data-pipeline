@@ -1,0 +1,17 @@
+[
+  {
+    "name": "fred",
+    "col2": "testcol2",
+    "col3": "testcol3"
+  },
+  {
+    "name": "fred",
+    "col2": "testcol2",
+    "col3": "testcol3"
+  },
+  {
+    "name": "peter",
+    "col2": "123",
+    "col3": "hello"
+  }
+]
