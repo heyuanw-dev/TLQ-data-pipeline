@@ -37,11 +37,11 @@ public class HelloMain implements RequestHandler<HashMap<String, Object>, HashMa
                 + "! This is a custom attribute added as output from SAAF!");
         
         //Create and populate a separate response object for function output. (OPTIONAL)
-        Response response = new Response();
-        response.setValue("Hello " + request.get("name")
-                + "! This is from a response object!");
+        // Response response = new Response();
+        // response.setSqlQuery("Hello " + request.get("name")
+        //         + "! This is from a response object!");
         
-        inspector.consumeResponse(response);
+        // inspector.consumeResponse(response);
         
         //****************END FUNCTION IMPLEMENTATION***************************
                 

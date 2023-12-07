@@ -122,7 +122,7 @@ public class QuerySQLite implements RequestHandler<Request, HashMap<String, Obje
         String hello = "Hello " + request.getSql();
 
         // Set return result in Response class, class is marshalled into JSON
-        r.setValue(hello);
+        r.setSqlQuery(hello);
         
         inspector.consumeResponse(r);
         

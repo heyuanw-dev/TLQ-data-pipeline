@@ -16,12 +16,12 @@ public class Request {
         return sql.toUpperCase();
     }
 
-    public void setSql(String name) {
-        this.sql = name;
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 
-    public Request(String name) {
-        this.sql = name;
+    public Request(String sql) {
+        this.sql = sql;
     }
 
     public Request() {

@@ -22,6 +22,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.13.0</version> 
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.22</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,6 +57,7 @@
             <directory>src/main/resources</directory>
             <includes>
                 <include>**/*.jpg</include>
+                <include>**/*.properties</include>
             </includes>
         </resource>
     </resources>

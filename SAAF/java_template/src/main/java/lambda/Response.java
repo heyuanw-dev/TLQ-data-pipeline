@@ -33,39 +33,17 @@ public class Response extends saaf.Response {
     }
 
     public String results;
-    public String getResults()
-    {
-        return this.results;
-    }
-    public void setResults(String results)
-    {
+    public void setResults(String results) {
         this.results = results;
     }
-    public String getNamesString()
-    {
-        // StringBuilder sb = new StringBuilder();
-        // for (String s : this.results)
-        // {
-        //     sb.append(s + "; ");
-        // }
-        // return sb.toString();
-        return this.results;
+    public String getResults() {
+        return results;
     }
 
-    public String mysqlversion;
-    public String getMysqlversion()
-    {
-        return mysqlversion;
-    }
-    public void setMysqlversion(String mysqlversion)
-    {
-        this.mysqlversion = mysqlversion;
-    }
-    
     @Override
     public String toString()
     {
-        return "value=" + this.getValue() + " " + this.getNamesString() + " " + this.getMysqlversion() + " " + super.toString(); 
+        return "value=" + this.getValue() + " " + this.getResults() + " " + super.toString(); 
     }
 
 }
