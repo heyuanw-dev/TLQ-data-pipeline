@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # JSON object to pass to Lambda Function
-json="SELECT * FROM mytable;"
+json="SELECT name FROM data;"
 
 echo "Invoking Lambda function using AWS CLI"
 time output=`aws lambda invoke --invocation-type RequestResponse --function-name queryRDS \

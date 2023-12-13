@@ -2,28 +2,34 @@ package lambda;
 
 /**
  *
- * @author Wes Lloyd
+ * @author Jyoti Shankar
  */
 public class Request {
 
-    String sql;
+    String bucketname;
+    String filename;
 
-    public String getSql() {
-        return sql;
+    public String getBucketname() {
+	    return bucketname;
+    }
+
+    public String getFilename() {
+	    return filename;
+    }
+
+    public void setBucketname(String bucketname) {
+	    this.bucketname =  bucketname;
+    }
+
+    public void setFilename(String filename) {
+	    this.filename = filename;
+    }
+
+    public Request(String bucketname, String filename){
+        this.bucketname = bucketname;
+        this.filename = filename;
     }
     
-    public String getNameALLCAPS() {
-        return sql.toUpperCase();
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
-
-    public Request(String sql) {
-        this.sql = sql;
-    }
-
     public Request() {
 
     }

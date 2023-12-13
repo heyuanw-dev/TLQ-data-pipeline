@@ -16,13 +16,13 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.util.LinkedList;
 import java.util.Properties;
 import saaf.Inspector;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author Wes Lloyd
  * @author Robert Cordingly
  */
-public class QueryRDS implements RequestHandler<HashMap<String, Object>, HashMap<String, Object>> {
+public class QueryVM implements RequestHandler<HashMap<String, Object>, HashMap<String, Object>> {
 
     /**
      * Lambda Function Handler
@@ -58,18 +58,27 @@ public class QueryRDS implements RequestHandler<HashMap<String, Object>, HashMap
         Response response = new Response();
         try 
         {
+            String ec2Hostname = "ec2-3-143-67-200.us-east-2.compute.amazonaws.com";
+            int port = 3306; // Change this to the port you want to test
+
+            try (Socket socket = new Socket(ec2Hostname, port)) {
+                logger.log("Connection successful to EC2 instance: " + ec2Hostname);
+            } catch (Exception e) {
+                logger.log("Failed to connect to EC2 instance: " + e.getMessage());
+            }
             Properties properties = new Properties();
-            properties.load(new FileInputStream("db.properties"));
+            properties.load(new FileInputStream("mysql.properties"));
             
             String url = properties.getProperty("url");
             String username = properties.getProperty("username");
             String password = properties.getProperty("password");
-            String driver = properties.getProperty("driver");
+            // String driver = properties.getProperty("driver");
             
             response.setValue(request.get("sql").toString());
             // Manually loading the JDBC Driver is commented out
             // No longer required since JDBC 4
             //Class.forName(driver);
+            logger.log(url+username+password);
             Connection con = DriverManager.getConnection(url,username,password);
             
             PreparedStatement ps = con.prepareStatement(request.get("sql").toString());
@@ -114,6 +123,111 @@ public class QueryRDS implements RequestHandler<HashMap<String, Object>, HashMap
         //Collect final information such as total runtime and cpu deltas.
         inspector.inspectAllDeltas();
         return inspector.finish();
+    }
+
+
+    // int main enables testing function from cmd line
+    public static void main (String[] args)
+    {
+        Context c = new Context() {
+            @Override
+            public String getAwsRequestId() {
+                return "";
+            }
+
+            @Override
+            public String getLogGroupName() {
+                return "";
+            }
+
+            @Override
+            public String getLogStreamName() {
+                return "";
+            }
+
+            @Override
+            public String getFunctionName() {
+                return "";
+            }
+
+            @Override
+            public String getFunctionVersion() {
+                return "";
+            }
+
+            @Override
+            public String getInvokedFunctionArn() {
+                return "";
+            }
+
+            @Override
+            public CognitoIdentity getIdentity() {
+                return null;
+            }
+
+            @Override
+            public ClientContext getClientContext() {
+                return null;
+            }
+
+            @Override
+            public int getRemainingTimeInMillis() {
+                return 0;
+            }
+
+            @Override
+            public int getMemoryLimitInMB() {
+                return 0;
+            }
+
+            @Override
+            public LambdaLogger getLogger() {
+                return new LambdaLogger() {
+                    @Override
+                    public void log(String string) {
+                        System.out.println("LOG:" + string);
+                    }
+                };
+            }
+        };
+
+        // Create an instance of the class
+        QueryVM lt = new QueryVM();
+
+        // Create a request hash map
+        HashMap req = new HashMap();
+
+        // Grab the name from the cmdline from arg 0
+        String sql = (args.length > 0 ? args[0] : "");
+
+        // Load the name into the request hashmap
+        req.put("sql", sql);
+
+        // Report name to stdout
+        System.out.println("cmd-line param name=" + req.get("sql"));
+
+        // Test properties file creation
+        // Properties properties = new Properties();
+        // properties.setProperty("driver", "com.mysql.cj.jdbc.Driver");
+        // properties.setProperty("url","");
+        // properties.setProperty("username","");
+        // properties.setProperty("password","");
+        // try
+        // {
+        //   properties.store(new FileOutputStream("test.properties"),"");
+        // }
+        // catch (IOException ioe)
+        // {
+        //   System.out.println("error creating properties file.")   ;
+        // }
+
+        // Run the function
+        HashMap resp = lt.handleRequest(req, c);
+        // System.out.println("The MySQL Serverless can't be called directly without running on the same VPC as the RDS cluster.");
+        // Response resp = new Response();
+
+        // Print out function result
+        System.out.println("function result:" + resp.toString());
     }
 
 }

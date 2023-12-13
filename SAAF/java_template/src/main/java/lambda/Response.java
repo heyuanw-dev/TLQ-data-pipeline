@@ -32,7 +32,7 @@ public class Response extends saaf.Response {
         this.value = value;
     }
 
-    public String results;
+    private String results;
     public void setResults(String results) {
         this.results = results;
     }
