@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author Wes Lloyd
  * @author Robert Cordingly
  */
-public class QueryRDS implements RequestHandler<HashMap<String, Object>, HashMap<String, Object>> {
+public class QueryMySQL implements RequestHandler<HashMap<String, Object>, HashMap<String, Object>> {
 
     /**
      * Lambda Function Handler
@@ -114,6 +114,110 @@ public class QueryRDS implements RequestHandler<HashMap<String, Object>, HashMap
         //Collect final information such as total runtime and cpu deltas.
         inspector.inspectAllDeltas();
         return inspector.finish();
+    }
+
+    // int main enables testing function from cmd line
+    public static void main (String[] args)
+    {
+        Context c = new Context() {
+            @Override
+            public String getAwsRequestId() {
+                return "";
+            }
+
+            @Override
+            public String getLogGroupName() {
+                return "";
+            }
+
+            @Override
+            public String getLogStreamName() {
+                return "";
+            }
+
+            @Override
+            public String getFunctionName() {
+                return "";
+            }
+
+            @Override
+            public String getFunctionVersion() {
+                return "";
+            }
+
+            @Override
+            public String getInvokedFunctionArn() {
+                return "";
+            }
+
+            @Override
+            public CognitoIdentity getIdentity() {
+                return null;
+            }
+
+            @Override
+            public ClientContext getClientContext() {
+                return null;
+            }
+
+            @Override
+            public int getRemainingTimeInMillis() {
+                return 0;
+            }
+
+            @Override
+            public int getMemoryLimitInMB() {
+                return 0;
+            }
+
+            @Override
+            public LambdaLogger getLogger() {
+                return new LambdaLogger() {
+                    @Override
+                    public void log(String string) {
+                        System.out.println("LOG:" + string);
+                    }
+                };
+            }
+        };
+
+        // Create an instance of the class
+        QueryMySQL lt = new QueryMySQL();
+
+        // Create a request hash map
+        HashMap req = new HashMap();
+
+        // Grab the name from the cmdline from arg 0
+        String sql = (args.length > 0 ? args[0] : "");
+
+        // Load the name into the request hashmap
+        req.put("sql", sql);
+
+        // Report name to stdout
+        System.out.println("cmd-line param name=" + req.get("sql"));
+
+        // Test properties file creation
+        // Properties properties = new Properties();
+        // properties.setProperty("driver", "com.mysql.cj.jdbc.Driver");
+        // properties.setProperty("url","");
+        // properties.setProperty("username","");
+        // properties.setProperty("password","");
+        // try
+        // {
+        //   properties.store(new FileOutputStream("test.properties"),"");
+        // }
+        // catch (IOException ioe)
+        // {
+        //   System.out.println("error creating properties file.")   ;
+        // }
+
+        // Run the function
+        HashMap resp = lt.handleRequest(req, c);
+        // System.out.println("The MySQL Serverless can't be called directly without running on the same VPC as the RDS cluster.");
+        // Response resp = new Response();
+
+        // Print out function result
+        System.out.println("function result:" + resp.toString());
     }
 
 }
