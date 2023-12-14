@@ -20,7 +20,7 @@ public class LambdaHandler {
 
         String user = "admin";
         String pwd = "abcd1234";
-        String host = "salesdb.cluster-ro-czh7jhcwdkic.us-east-2.rds.amazonaws.com";
+        //String host = "salesdb.cluster-ro-czh7jhcwdkic.us-east-2.rds.amazonaws.com";
         String dbname = "salesdb";
 
         String s3Bucket = (String) request.get("s3_bucket");
