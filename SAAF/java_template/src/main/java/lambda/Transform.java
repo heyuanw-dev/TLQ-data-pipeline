@@ -49,7 +49,7 @@ public class Transform implements RequestHandler<Request, HashMap<String, Object
         
         //Collect inital data.
         Inspector inspector = new Inspector();
-        inspector.inspectAllDeltas();
+        inspector.inspectAll();
         
         //****************START FUNCTION IMPLEMENTATION*************************
         
