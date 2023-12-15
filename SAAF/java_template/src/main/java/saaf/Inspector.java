@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -599,24 +600,28 @@ public class Inspector {
                 ).stream()
                 // filter out properties with setters only
                 .filter(pd -> Objects.nonNull(pd.getReadMethod()))
+                .map(pd -> { // invoke method to get value
+                    try {
+                        return new AbstractMap.SimpleEntry<>(
+                            pd.getName(), pd.getReadMethod().invoke(bean));
+                    } catch (IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException e) {
+                        // replace this with better error handling
+                        System.out.println(e.toString());
+                        return null;
+                    }
+                })
+                .filter(entry -> Objects.nonNull(entry) && Objects.nonNull(entry.getValue()))
                 .collect(Collectors.toMap(
-                        // bean property name
-                        PropertyDescriptor::getName,
-                        pd -> { // invoke method to get value
-                            try {
-                                return pd.getReadMethod().invoke(bean);
-                            } catch (IllegalAccessException
-                            | IllegalArgumentException
-                            | InvocationTargetException e) {
-                                // replace this with better error handling
-                                System.out.println(e.toString());
-                                return null;
-                            }
-                        }));
+                        Map.Entry::getKey, 
+                        Map.Entry::getValue
+                ));
         } catch (Exception e) {
             // replace this with better error handling
             System.out.println(e.toString());
             return null;
-        } 
+        }
+
     }
 }

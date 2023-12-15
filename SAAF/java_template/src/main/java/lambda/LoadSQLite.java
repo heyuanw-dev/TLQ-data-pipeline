@@ -1,4 +1,4 @@
-package tool;
+package lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -19,15 +19,15 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.UUID;
 
-public class LoadAndInsert implements RequestHandler<Request, HashMap<String, Object>> {
+public class LoadSQLite implements RequestHandler<Request, HashMap<String, Object>> {
     @Override
-    public HashMap<String, Object> handleRequest(Request input, Context context) {
+    public HashMap<String, Object> handleRequest(Request request, Context context) {
         LambdaLogger logger = context.getLogger();
         Inspector inspector = new Inspector();
         inspector.inspectAll();
 
-        String bucketname = input.getBucketname();
-        String filename = input.getFilename();
+        String bucketname = request.getBucketname();
+        String filename = request.getFilename();
 
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
         //get object file using source bucket and srcKey name
@@ -73,8 +73,8 @@ public class LoadAndInsert implements RequestHandler<Request, HashMap<String, Ob
             rs.close();
 
             // Insert row into mytable
-            ps = con.prepareStatement("insert into mytable values('" + request.getName() + "','" +
-                    UUID.randomUUID().toString().substring(0,8) + "','" + UUID.randomUUID().toString().substring(0,4) + "');");
+            // ps = con.prepareStatement("insert into mytable values('" + request.getName() + "','" +
+            //         UUID.randomUUID().toString().substring(0,8) + "','" + UUID.randomUUID().toString().substring(0,4) + "');");
             ps.execute();
 
             // Query mytable to obtain full resultset
@@ -94,7 +94,7 @@ public class LoadAndInsert implements RequestHandler<Request, HashMap<String, Ob
             rs.close();
             con.close();
 
-            r.setNames(ll);
+            // r.setNames(ll);
 
             // sleep to ensure that concurrent calls obtain separate Lambdas
             try

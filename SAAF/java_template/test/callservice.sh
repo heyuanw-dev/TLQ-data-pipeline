@@ -8,3 +8,4 @@ echo ""
 echo "JSON RESULT:"
 echo $output | jq
 echo ""
+
