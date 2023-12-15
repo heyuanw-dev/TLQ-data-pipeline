@@ -36,5 +36,5 @@ for i in {1..36}; do
     echo "JSON RESULT:"
     echo $output | jq 'del(.results)'
 
-    sleep 600
+    sleep 1
 done
